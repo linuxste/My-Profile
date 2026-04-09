@@ -221,12 +221,18 @@
 
   .act-bar-fill { height: 100%; width: 0%; transition: width 0.4s ease; }
 
-  .act-row[data-id="gym"]     .act-bar-fill { background: var(--c-gym);     }
-  .act-row[data-id="rehab"]   .act-bar-fill { background: var(--c-rehab);   }
-  .act-row[data-id="study"]   .act-bar-fill { background: var(--c-study);   }
-  .act-row[data-id="jobapps"] .act-bar-fill { background: var(--c-jobapps); }
-  .act-row[data-id="gaming"]  .act-bar-fill { background: var(--c-gaming);  }
-  .act-row[data-id="reading"] .act-bar-fill { background: var(--c-reading); }
+  .act-row[data-id="gym"]     .act-bar-fill,
+  .tot-row[data-id="gym"]     .act-bar-fill { background: var(--c-gym);     }
+  .act-row[data-id="rehab"]   .act-bar-fill,
+  .tot-row[data-id="rehab"]   .act-bar-fill { background: var(--c-rehab);   }
+  .act-row[data-id="study"]   .act-bar-fill,
+  .tot-row[data-id="study"]   .act-bar-fill { background: var(--c-study);   }
+  .act-row[data-id="jobapps"] .act-bar-fill,
+  .tot-row[data-id="jobapps"] .act-bar-fill { background: var(--c-jobapps); }
+  .act-row[data-id="gaming"]  .act-bar-fill,
+  .tot-row[data-id="gaming"]  .act-bar-fill { background: var(--c-gaming);  }
+  .act-row[data-id="reading"] .act-bar-fill,
+  .tot-row[data-id="reading"] .act-bar-fill { background: var(--c-reading); }
 
   .act-ctr { display: flex; align-items: center; flex-shrink: 0; }
 
