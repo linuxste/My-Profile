@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stefano // Monthly Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  html, body {
+    background: #0e1621 !important;
+    background-color: #0e1621 !important;
+    color: #c8dff0;
+    margin: 0; padding: 0;
+  }
+
+  :root {
+    --bg:        #0e1621;
+    --surface:   #131f2e;
+    --surface2:  #182333;
+    --border:    #1e2f42;
+    --border-hi: #2a4460;
+    --text:      #c8dff0;
+    --text-dim:  #3a5570;
+    --text-mid:  #7aaac8;
+    --pixel:     'Press Start 2P', monospace;
+    --mono:      'Share Tech Mono', monospace;
+
+    --c-gym:     #7ecec4;
+    --c-rehab:   #7ecec4;
+    --c-study:   #7b9fe0;
+    --c-jobapps: #e0b96a;
+    --c-gaming:  #c47be0;
+    --c-reading: #e07b9f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Press Start 2P', monospace;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 32px 18px 80px;
+    background: #0e1621;
+    /* scanlines */
+    background-image: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+    );
+  }
+
+  .page { width: 100%; max-width: 520px; }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-tag {
+    font-size: 6px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+  }
+
+  .header h1 {
+    font-size: clamp(10px, 3vw, 14px);
+    color: var(--text);
+    letter-spacing: 2px;
+    line-height: 1.8;
+  }
+
+  .header h1 span { color: var(--c-gym); }
+
+  .month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 18px;
+  }
+
+  .month-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-mid);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    width: 28px; height: 28px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .month-btn:hover { border-color: var(--text-mid); color: var(--text); }
+
+  .month-label {
+    font-size: 8px;
+    color: var(--text);
+    letter-spacing: 3px;
+    min-width: 130px;
+    text-align: center;
+  }
+
+  .save-flash {
+    font-size: 6px;
+    color: var(--c-gym);
+    letter-spacing: 2px;
+    text-align: center;
+    height: 14px;
+    margin-top: 12px;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .save-flash.show { opacity: 1; }
+
+  /* ── SECTION HEADING ── */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 26px 0 14px;
+  }
+  .sh-txt { font-size: 7px; color: var(--text-dim); letter-spacing: 2px; white-space: nowrap; }
+  .sh-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ── WEEK SELECTOR ── */
+  .week-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+  }
+
+  .wd {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    border: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+
+  .wd-lbl {
+    font-size: 5px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .wd-pip {
+    width: 10px; height: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    transition: all 0.15s;
+  }
+
+  .wd-num {
+    font-size: 5px;
+    color: var(--text-dim);
+    letter-spacing: 0;
+  }
+
+  /* today highlight */
+  .wd.today .wd-lbl { color: var(--text-mid); }
+  .wd.today .wd-pip { border-color: var(--border-hi); }
+  .wd.today .wd-num { color: var(--text-mid); }
+
+  /* selected day */
+  .wd.selected {
+    border-color: var(--c-gym);
+  }
+  .wd.selected .wd-lbl { color: var(--c-gym); }
+  .wd.selected .wd-pip { background: var(--c-gym); border-color: var(--c-gym); }
+  .wd.selected .wd-num { color: var(--c-gym); }
+
+  /* has data dot */
+  .wd.has-data .wd-pip { box-shadow: 0 0 4px rgba(126,206,196,0.4); }
+
+  /* selected day label */
+  .day-label {
+    font-size: 7px;
+    color: var(--text-mid);
+    letter-spacing: 2px;
+    text-align: center;
+    margin-top: 10px;
+    min-height: 14px;
+  }
+
+  /* ── ACTIVITY ROWS ── */
+  .activity-list { display: flex; flex-direction: column; }
+
+  .act-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .act-row:first-child { border-top: 1px solid var(--border); }
+
+  .act-icon { font-size: 15px; width: 22px; text-align: center; flex-shrink: 0; }
+
+  .act-name {
+    font-size: 7px;
+    color: var(--text);
+    letter-spacing: 1px;
+    width: 90px;
+    flex-shrink: 0;
+  }
+
+  .act-bar-bg {
+    flex: 1;
+    height: 10px;
+    background: var(--surface2);
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .act-bar-fill { height: 100%; width: 0%; transition: width 0.4s ease; }
+
+  .act-row[data-id="gym"]     .act-bar-fill { background: var(--c-gym);     }
+  .act-row[data-id="rehab"]   .act-bar-fill { background: var(--c-rehab);   }
+  .act-row[data-id="study"]   .act-bar-fill { background: var(--c-study);   }
+  .act-row[data-id="jobapps"] .act-bar-fill { background: var(--c-jobapps); }
+  .act-row[data-id="gaming"]  .act-bar-fill { background: var(--c-gaming);  }
+  .act-row[data-id="reading"] .act-bar-fill { background: var(--c-reading); }
+
+  .act-ctr { display: flex; align-items: center; flex-shrink: 0; }
+
+  .cnt-btn {
+    background: none; border: none;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    cursor: pointer;
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    transition: color 0.12s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cnt-btn:active  { transform: scale(0.8); }
+  .cnt-btn.p:hover { color: var(--text); }
+  .cnt-btn.m:hover { color: #e07b7b; }
+
+  .cnt-val {
+    font-size: 8px;
+    min-width: 32px;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .act-row[data-id="gym"]     .cnt-val { color: var(--c-gym);     }
+  .act-row[data-id="rehab"]   .cnt-val { color: var(--c-rehab);   }
+  .act-row[data-id="study"]   .cnt-val { color: var(--c-study);   }
+  .act-row[data-id="jobapps"] .cnt-val { color: var(--c-jobapps); }
+  .act-row[data-id="gaming"]  .cnt-val { color: var(--c-gaming);  }
+  .act-row[data-id="reading"] .cnt-val { color: var(--c-reading); }
+
+  .cnt-val.bump { animation: bump 0.22s ease; }
+  @keyframes bump {
+    0%  { transform: scale(1);    }
+    45% { transform: scale(1.35); }
+    100%{ transform: scale(1);    }
+  }
+
+  /* ── TOTALS ── */
+  .totals-list { display: flex; flex-direction: column; }
+
+  .tot-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tot-row:first-child { border-top: 1px solid var(--border); }
+
+  .tot-icon  { font-size: 13px; width: 22px; text-align: center; flex-shrink: 0; }
+  .tot-name  { font-size: 7px; color: var(--text-mid); letter-spacing: 1px; flex: 1; }
+  .tot-right { display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }
+  .tot-val   { font-size: 8px; width: 40px; text-align: right; line-height: 1; }
+  .tot-unit  { font-size: 6px; color: var(--text-dim); letter-spacing: 1px; line-height: 1; width: 52px; }
+
+  .tot-row[data-id="gym"]     .tot-val { color: var(--c-gym);     }
+  .tot-row[data-id="rehab"]   .tot-val { color: var(--c-rehab);   }
+  .tot-row[data-id="study"]   .tot-val { color: var(--c-study);   }
+  .tot-row[data-id="jobapps"] .tot-val { color: var(--c-jobapps); }
+  .tot-row[data-id="gaming"]  .tot-val { color: var(--c-gaming);  }
+  .tot-row[data-id="reading"] .tot-val { color: var(--c-reading); }
+
+  /* ── FOOTER ── */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-txt { font-size: 6px; color: var(--text-dim); letter-spacing: 2px; }
+
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    letter-spacing: 1px;
+    padding: 7px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: #e07b7b; color: #e07b7b; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-tag">// MONTHLY LOG</div>
+    <h1>STEFANO <span>//</span> TRACKER</h1>
+    <div class="month-nav">
+      <button class="month-btn" id="prev">&#9664;</button>
+      <div class="month-label" id="month-label"></div>
+      <button class="month-btn" id="next">&#9654;</button>
+    </div>
+    <div class="save-flash" id="save-flash">// SAVED</div>
+  </div>
+
+  <!-- DAY SELECTOR -->
+  <div class="section-head"><span class="sh-txt">// SELECT DAY</span><div class="sh-line"></div></div>
+  <div class="week-row" id="week-row"></div>
+  <div class="day-label" id="day-label"></div>
+
+  <!-- ACTIVITIES for selected day -->
+  <div class="section-head"><span class="sh-txt" id="activities-head">// ACTIVITIES</span><div class="sh-line"></div></div>
+  <div class="activity-list" id="activity-list"></div>
+
+  <!-- MONTH TOTALS -->
+  <div class="section-head"><span class="sh-txt">// MONTH TOTALS</span><div class="sh-line"></div></div>
+  <div class="totals-list" id="totals-list"></div>
+
+  <div class="footer">
+    <span class="footer-txt">// DATA STORED LOCALLY</span>
+    <button class="reset-btn" onclick="confirmReset()">RESET MONTH</button>
+  </div>
+
+</div>
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────
+const ACTIVITIES = [
+  { id: 'gym',     icon: '💪', name: 'GYM',      unit: 'sessions', step: 1,   barMax: 20 },
+  { id: 'rehab',   icon: '🦶', name: 'REHAB',    unit: 'sessions', step: 1,   barMax: 20 },
+  { id: 'study',   icon: '📘', name: 'STUDY',    unit: 'hrs',      step: 0.5, barMax: 40 },
+  { id: 'jobapps', icon: '📄', name: 'JOB APPS', unit: 'sent',     step: 1,   barMax: 20 },
+  { id: 'gaming',  icon: '🎮', name: 'GAMING',   unit: 'hrs',      step: 0.5, barMax: 40 },
+  { id: 'reading', icon: '📖', name: 'READING',  unit: 'hrs',      step: 0.5, barMax: 20 },
+];
+
+const MONTHS   = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const DAYS     = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+const FULLDAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+// ── STATE ────────────────────────────────────────────────────────
+let year      = new Date().getFullYear();
+let month     = new Date().getMonth();
+// selectedDay = 1..31 (calendar day), null = no day selected
+let selectedDay = new Date().getDate();
+
+// ── STORAGE KEYS ─────────────────────────────────────────────────
+// Per-day key: stores { gym: 2, study: 1.5, ... } for a specific calendar date
+const dayKey   = (d) => `trk_${year}_${String(month+1).padStart(2,'0')}_${String(d).padStart(2,'0')}`;
+// Month key: not used for counters anymore (computed from days), kept for reset
+const mKey     = ()  => `trk_${year}_${String(month+1).padStart(2,'0')}`;
+
+// ── PERSISTENCE ──────────────────────────────────────────────────
+const loadDay  = (d) => { try { return JSON.parse(localStorage.getItem(dayKey(d))) || {}; } catch { return {}; } };
+const saveDay  = (d, v) => { localStorage.setItem(dayKey(d), JSON.stringify(v)); flash(); };
+
+// Month totals = sum across all days in month
+function monthTotals() {
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const totals = {};
+  ACTIVITIES.forEach(a => totals[a.id] = 0);
+  for (let d = 1; d <= daysInMonth; d++) {
+    const data = loadDay(d);
+    ACTIVITIES.forEach(a => {
+      totals[a.id] = parseFloat((totals[a.id] + (data[a.id] || 0)).toFixed(1));
+    });
+  }
+  return totals;
+}
+
+// Which days have any data this month?
+function daysWithData() {
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const result = [];
+  for (let d = 1; d <= daysInMonth; d++) {
+    const data = loadDay(d);
+    if (ACTIVITIES.some(a => (data[a.id] || 0) > 0)) result.push(d);
+  }
+  return result;
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────────
+function change(id, delta) {
+  if (!selectedDay) return;
+  const data = loadDay(selectedDay);
+  data[id]   = Math.max(0, parseFloat(((data[id] || 0) + delta).toFixed(1)));
+  saveDay(selectedDay, data);
+  bumpVal(id);
+  renderActivities();
+  renderTotals();
+  renderDays(); // update has-data dots
+}
+
+function selectDay(d) {
+  selectedDay = d;
+  renderDays();
+  renderActivities();
+  updateDayLabel();
+}
+
+function confirmReset() {
+  if (!confirm(`Reset ALL data for ${MONTHS[month]} ${year}?`)) return;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  for (let d = 1; d <= daysInMonth; d++) localStorage.removeItem(dayKey(d));
+  renderActivities();
+  renderTotals();
+  renderDays();
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────
+function flash() {
+  const el = document.getElementById('save-flash');
+  el.classList.add('show');
+  clearTimeout(window._ft);
+  window._ft = setTimeout(() => el.classList.remove('show'), 1500);
+}
+
+function bumpVal(id) {
+  const el = document.getElementById(`val-${id}`);
+  if (!el) return;
+  el.classList.remove('bump');
+  void el.offsetWidth;
+  el.classList.add('bump');
+}
+
+const fmt = v => Number.isInteger(v) ? String(v) : v.toFixed(1);
+
+// get Mon-based day-of-week index for a given calendar day this month
+function dowOf(calDay) {
+  return (new Date(year, month, calDay).getDay() + 6) % 7; // 0=Mon, 6=Sun
+}
+
+// ── RENDER ───────────────────────────────────────────────────────
+
+// Build a 7-column week view for the CURRENT week (Mon-Sun)
+// but also show prev/next days so the user can see a rolling 7-day window
+// centred on today (if current month) or last day (if past month)
+function renderDays() {
+  const today       = new Date();
+  const isNow       = year === today.getFullYear() && month === today.getMonth();
+  const pivotDay    = isNow ? today.getDate() : new Date(year, month+1, 0).getDate();
+  const pivotDow    = dowOf(pivotDay); // 0=Mon
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const withData    = new Set(daysWithData());
+
+  // Build a 7-day window ending on Sunday of the current week
+  // Start = Monday of this week
+  const weekStart = pivotDay - pivotDow; // can be <= 0 (prev month, clamp to 1)
+
+  const cells = [];
+  for (let i = 0; i < 7; i++) {
+    const calDay = weekStart + i;
+    const valid  = calDay >= 1 && calDay <= daysInMonth;
+    cells.push({ calDay: valid ? calDay : null, dow: i });
+  }
+
+  const container = document.getElementById('week-row');
+  container.innerHTML = cells.map(({ calDay, dow }) => {
+    if (!calDay) {
+      return `<div class="wd" style="opacity:0.2; cursor:default;">
+        <span class="wd-lbl">${DAYS[dow]}</span>
+        <div class="wd-pip"></div>
+        <span class="wd-num">-</span>
+      </div>`;
+    }
+    const isToday   = isNow && calDay === today.getDate();
+    const isSel     = calDay === selectedDay;
+    const hasData   = withData.has(calDay);
+    return `<div class="wd ${isToday?'today':''} ${isSel?'selected':''} ${hasData?'has-data':''}"
+                 onclick="selectDay(${calDay})">
+      <span class="wd-lbl">${DAYS[dow]}</span>
+      <div class="wd-pip"></div>
+      <span class="wd-num">${calDay}</span>
+    </div>`;
+  }).join('');
+
+  updateDayLabel();
+}
+
+function updateDayLabel() {
+  const el = document.getElementById('day-label');
+  if (!selectedDay) {
+    el.textContent = 'SELECT A DAY TO LOG';
+    return;
+  }
+  const dow = dowOf(selectedDay);
+  el.textContent = `${FULLDAYS[dow].toUpperCase()} ${selectedDay} ${MONTHS[month]}`;
+
+  document.getElementById('activities-head').textContent =
+    `// ACTIVITIES - ${MONTHS[month]} ${selectedDay}`;
+}
+
+function renderActivities() {
+  const data = selectedDay ? loadDay(selectedDay) : {};
+  document.getElementById('activity-list').innerHTML = ACTIVITIES.map(a => {
+    const val = data[a.id] || 0;
+    const pct = Math.min(100, (val / a.barMax) * 100);
+    const disabled = !selectedDay ? 'style="opacity:0.4;pointer-events:none;"' : '';
+    return `
+    <div class="act-row" data-id="${a.id}" ${disabled}>
+      <span class="act-icon">${a.icon}</span>
+      <span class="act-name">${a.name}</span>
+      <div class="act-bar-bg">
+        <div class="act-bar-fill" style="width:${pct}%"></div>
+      </div>
+      <div class="act-ctr">
+        <button class="cnt-btn m" onclick="change('${a.id}',${-a.step})">-</button>
+        <span class="cnt-val" id="val-${a.id}">${fmt(val)}</span>
+        <button class="cnt-btn p" onclick="change('${a.id}',${a.step})">+</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTotals() {
+  const totals = monthTotals();
+  document.getElementById('totals-list').innerHTML = ACTIVITIES.map(a => `
+    <div class="tot-row" data-id="${a.id}">
+      <span class="tot-icon">${a.icon}</span>
+      <span class="tot-name">${a.name}</span>
+      <div class="tot-right">
+        <span class="tot-val">${fmt(totals[a.id])}</span>
+        <span class="tot-unit">${a.unit}</span>
+      </div>
+    </div>`).join('');
+}
+
+function updateLabel() {
+  document.getElementById('month-label').textContent = `${MONTHS[month]} ${year}`;
+}
+
+function renderAll() {
+  updateLabel();
+  renderDays();
+  renderActivities();
+  renderTotals();
+}
+
+// Month navigation: reset selectedDay to today if current month, else last day
+document.getElementById('prev').onclick = () => {
+  if (--month < 0) { month = 11; year--; }
+  const today = new Date();
+  selectedDay = (year === today.getFullYear() && month === today.getMonth())
+    ? today.getDate()
+    : new Date(year, month+1, 0).getDate();
+  renderAll();
+};
+
+document.getElementById('next').onclick = () => {
+  if (++month > 11) { month = 0; year++; }
+  const today = new Date();
+  selectedDay = (year === today.getFullYear() && month === today.getMonth())
+    ? today.getDate()
+    : new Date(year, month+1, 0).getDate();
+  renderAll();
+};
+
+renderAll();
+</script>
+</body>
+</html>
