@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stefano // Character Stats</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+  :root {
+    --bg: #0a0c14; --panel: #0f1220; --border: #1e2a4a;
+    --accent: #4af0c4; --accent2: #f0c44a; --accent3: #f04a7a;
+    --text: #c8d8f0; --dim: #4a5a7a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg); font-family: 'VT323', monospace; color: var(--text);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 24px 16px; overflow-x: hidden;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none; z-index: 1;
+  }
+
+  .card {
+    width: 100%; max-width: 560px;
+    border: 2px solid var(--border); background: var(--panel);
+    box-shadow: 0 0 0 1px #0a0c14, 0 0 40px rgba(74,240,196,0.08), inset 0 0 60px rgba(0,0,0,0.4);
+    position: relative; animation: fadeIn 0.6s ease;
+  }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+
+  .card::before, .card::after, .corner-bl, .corner-br {
+    content: ''; position: absolute; width: 12px; height: 12px;
+    border-color: var(--accent); border-style: solid;
+  }
+  .card::before  { top:-2px; left:-2px;   border-width: 2px 0 0 2px; }
+  .card::after   { top:-2px; right:-2px;  border-width: 2px 2px 0 0; }
+  .corner-bl     { bottom:-2px; left:-2px;  border-width: 0 0 2px 2px; }
+  .corner-br     { bottom:-2px; right:-2px; border-width: 0 2px 2px 0; }
+
+  .header {
+    padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 18px;
+  }
+  .avatar {
+    width: 56px; height: 56px; border: 2px solid var(--accent);
+    background: linear-gradient(135deg, #1a2440, #0f1830);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; flex-shrink: 0; box-shadow: 0 0 16px rgba(74,240,196,0.25); position: relative;
+  }
+  .avatar::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg, rgba(74,240,196,0.1), transparent 60%); }
+  .char-name { font-family:'Press Start 2P',monospace; font-size:13px; color:var(--accent); letter-spacing:1px; text-shadow:0 0 12px var(--accent); line-height:1.4; }
+  .char-class { font-size:18px; color:var(--dim); margin-top:4px; }
+  .char-level { font-family:'Press Start 2P',monospace; font-size:9px; color:var(--accent2); background:rgba(240,196,74,0.1); border:1px solid rgba(240,196,74,0.3); padding:3px 7px; display:inline-block; margin-top:6px; }
+
+  .section-label { font-family:'Press Start 2P',monospace; font-size:7px; color:var(--dim); letter-spacing:2px; padding:10px 24px 6px; }
+
+  /* RADAR */
+  .radar-wrap { display:flex; align-items:center; justify-content:center; padding:10px 24px 18px; border-bottom:1px solid var(--border); }
+  #radar-shape { opacity:0; animation: radarIn 0.9s cubic-bezier(0.22,1,0.36,1) 0.3s forwards; }
+  #radar-dots  { opacity:0; animation: radarIn 0.4s ease 1s forwards; }
+  @keyframes radarIn { from { opacity:0; } to { opacity:1; } }
+  .radar-legend { display:flex; flex-direction:column; gap:6px; padding-left:16px; flex-shrink:0; }
+  .legend-item { display:flex; align-items:center; gap:7px; font-size:16px; color:var(--text); white-space:nowrap; }
+  .legend-dot { width:8px; height:8px; background:var(--accent); flex-shrink:0; box-shadow:0 0 4px var(--accent); }
+  .legend-val { font-family:'Press Start 2P',monospace; font-size:7px; color:var(--accent2); margin-left:2px; }
+  .lck-mark { font-family:'Press Start 2P',monospace; font-size:7px; color:var(--accent3); margin-left:2px; animation:blink 1.2s step-end infinite; }
+
+  /* SKILLS - exactly as original working version */
+  .stats { padding: 4px 24px 20px; }
+
+  .stat-row {
+    border-bottom: 1px solid rgba(30,42,74,0.5);
+    opacity: 0;
+    animation: rowIn 0.4s ease forwards;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    -webkit-tap-highlight-color: rgba(74,240,196,0.1);
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-row:hover { background: rgba(74,240,196,0.04); }
+  .stat-row-inner {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 0; width: 100%;
+  }
+  @keyframes rowIn { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:none; } }
+
+  .stat-icon { font-size:16px; width:22px; text-align:center; flex-shrink:0; }
+  .stat-name { font-size:17px; color:var(--text); width:190px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .bar-track { flex:1; height:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); position:relative; overflow:hidden; }
+  .bar-fill { height:100%; position:relative; animation:fillBar 1s ease forwards; animation-delay:var(--delay,0s); transform-origin:left; }
+  @keyframes fillBar { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+  .bar-fill::after { content:''; position:absolute; top:0; right:0; width:2px; height:100%; background:rgba(255,255,255,0.6); }
+  .bar-fill::before { content:''; position:absolute; inset:0; background:linear-gradient(to bottom, rgba(255,255,255,0.15), transparent); }
+  .stat-val { font-family:'Press Start 2P',monospace; font-size:8px; width:20px; text-align:right; flex-shrink:0; }
+
+  .tier-s { background: linear-gradient(90deg, #4af0c4, #4ad4f0); }
+  .tier-a { background: linear-gradient(90deg, #4a90f0, #6a70f0); }
+  .tier-c { background: linear-gradient(90deg, #f0c44a, #f0904a); }
+  .tier-d { background: linear-gradient(90deg, #f04a7a, #f04a4a); }
+
+  .tooltip {
+    display: none;
+    background: #060810;
+    border: 1px solid var(--accent);
+    border-top: none;
+    padding: 8px 14px 10px;
+    font-size: 16px; color: #a0b8d8; line-height: 1.4;
+  }
+  .tooltip::before { content: '> '; color: var(--accent); }
+  .stat-row.open { background: rgba(74,240,196,0.04); }
+  .stat-row.open .tooltip { display: block; }
+
+  .hint { font-family:'Press Start 2P',monospace; font-size:6px; color:var(--dim); text-align:center; padding:0 0 8px; letter-spacing:1px; }
+  .footer { border-top:1px solid var(--border); padding:10px 24px; display:flex; justify-content:space-between; align-items:center; font-size:14px; color:var(--dim); }
+  .blink { animation:blink 1.2s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .hp-bar { display:flex; gap:2px; }
+  .hp-pip { width:8px; height:8px; background:var(--accent3); box-shadow:0 0 4px var(--accent3); }
+  .hp-pip.empty { background:rgba(240,74,122,0.15); box-shadow:none; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="corner-bl"></div><div class="corner-br"></div>
+
+  <div class="header">
+    <div class="avatar">🛡️</div>
+    <div class="header-info">
+      <div class="char-name">STEFANO</div>
+      <div class="char-class">Adept Supply Chain Commander / Gamer</div>
+      <div class="char-level">LVL 74 &nbsp;|&nbsp; CLASS: PALADIN</div>
+    </div>
+  </div>
+
+  <div class="section-label">// BASE STATS</div>
+
+  <div class="radar-wrap">
+    <svg width="240" height="215" viewBox="0 0 240 215" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+      <defs>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <path d="M120.0,90.6 L131.3,96.0 L134.0,108.2 L126.2,118.0 L113.8,118.0 L106.0,108.2 L108.7,96.0 Z" fill="none" stroke="#1e2a4a" stroke-width="0.8"/>
+<path d="M120.0,76.2 L142.5,87.0 L148.1,111.4 L132.5,130.9 L107.5,130.9 L91.9,111.4 L97.5,87.0 Z" fill="none" stroke="#1e2a4a" stroke-width="0.8"/>
+<path d="M120.0,61.8 L153.8,78.1 L162.1,114.6 L138.7,143.9 L101.3,143.9 L77.9,114.6 L86.2,78.1 Z" fill="none" stroke="#1e2a4a" stroke-width="0.8"/>
+<path d="M120.0,47.4 L165.0,69.1 L176.2,117.8 L145.0,156.9 L95.0,156.9 L63.8,117.8 L75.0,69.1 Z" fill="none" stroke="#1e2a4a" stroke-width="0.8"/>
+<path d="M120.0,33.0 L176.3,60.1 L190.2,121.0 L151.2,169.9 L88.8,169.9 L49.8,121.0 L63.7,60.1 Z" fill="none" stroke="#2a3a5a" stroke-width="1.5"/>
+
+      <line x1="120" y1="105" x2="120.0" y2="33.0" stroke="#1e2a4a" stroke-width="0.8"/>
+<line x1="120" y1="105" x2="176.3" y2="60.1" stroke="#1e2a4a" stroke-width="0.8"/>
+<line x1="120" y1="105" x2="190.2" y2="121.0" stroke="#1e2a4a" stroke-width="0.8"/>
+<line x1="120" y1="105" x2="151.2" y2="169.9" stroke="#1e2a4a" stroke-width="0.8"/>
+<line x1="120" y1="105" x2="88.8" y2="169.9" stroke="#1e2a4a" stroke-width="0.8"/>
+<line x1="120" y1="105" x2="49.8" y2="121.0" stroke="#1e2a4a" stroke-width="0.8"/>
+<line x1="120" y1="105" x2="63.7" y2="60.1" stroke="#1e2a4a" stroke-width="0.8"/>
+
+      <g id="radar-shape">
+        <path d="M120.0,47.4 L153.8,78.1 L162.1,114.6 L145.0,156.9 L98.1,150.4 L63.8,117.8 L91.9,82.6 Z" fill="rgba(74,240,196,0.12)" stroke="#4af0c4" stroke-width="1.5" filter="url(#glow)"/>
+      </g>
+      <g id="radar-dots">
+        <circle cx="120.0" cy="47.4" r="3.5" fill="#4af0c4" filter="url(#glow)"/>
+<circle cx="153.8" cy="78.1" r="3.5" fill="#4af0c4" filter="url(#glow)"/>
+<circle cx="162.1" cy="114.6" r="3.5" fill="#4af0c4" filter="url(#glow)"/>
+<circle cx="145.0" cy="156.9" r="3.5" fill="#4af0c4" filter="url(#glow)"/>
+<circle cx="98.1" cy="150.4" r="3.5" fill="#4af0c4" filter="url(#glow)"/>
+<circle cx="63.8" cy="117.8" r="3.5" fill="#4af0c4" filter="url(#glow)"/>
+<circle cx="91.9" cy="82.6" r="3.5" fill="#f04a7a" filter="url(#glow)"/>
+
+      </g>
+      <text x="120.0" y="17.0" text-anchor="middle" dominant-baseline="middle" font-family="'Press Start 2P', monospace" font-size="8" font-weight="bold" fill="#f0c44a">INT</text>
+<text x="188.8" y="50.1" text-anchor="middle" dominant-baseline="middle" font-family="'Press Start 2P', monospace" font-size="8" font-weight="bold" fill="#f0c44a">WIS</text>
+<text x="205.8" y="124.6" text-anchor="middle" dominant-baseline="middle" font-family="'Press Start 2P', monospace" font-size="8" font-weight="bold" fill="#f0c44a">STA</text>
+<text x="158.2" y="184.3" text-anchor="middle" dominant-baseline="middle" font-family="'Press Start 2P', monospace" font-size="8" font-weight="bold" fill="#f0c44a">CHA</text>
+<text x="81.8" y="184.3" text-anchor="middle" dominant-baseline="middle" font-family="'Press Start 2P', monospace" font-size="8" font-weight="bold" fill="#f0c44a">STR</text>
+<text x="34.2" y="124.6" text-anchor="middle" dominant-baseline="middle" font-family="'Press Start 2P', monospace" font-size="8" font-weight="bold" fill="#f0c44a">AGI</text>
+<text x="51.2" y="50.1" text-anchor="middle" dominant-baseline="middle" font-family="'Press Start 2P', monospace" font-size="8" font-weight="bold" fill="#f04a7a">LCK</text>
+
+    </svg>
+    <div class="radar-legend">
+      <div class="legend-item">
+        <div class="legend-dot" style=""></div>
+        <span>INTELLIGENCE</span><span class="legend-val">8</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style=""></div>
+        <span>STRENGTH</span><span class="legend-val">7</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style=""></div>
+        <span>STAMINA</span><span class="legend-val">6</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style=""></div>
+        <span>AGILITY</span><span class="legend-val">8</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style=""></div>
+        <span>WISDOM</span><span class="legend-val">6</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style=""></div>
+        <span>CHARM</span><span class="legend-val">8</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#f04a7a;box-shadow:0 0 4px #f04a7a;"></div>
+        <span>LUCK</span><span class="lck-mark">?</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">// MAIN SKILL ATTRIBUTES</div>
+
+  <div class="stats">
+
+    <div class="stat-row" style="animation-delay:0.1s">
+      <div class="stat-row-inner">
+        <span class="stat-icon">📦</span>
+        <span class="stat-name">Supply Chain Mastery</span>
+        <div class="bar-track"><div class="bar-fill tier-s" style="width:100%;--delay:0.3s"></div></div>
+        <span class="stat-val" style="color:#f0c44a;text-shadow:0 0 8px #f0c44a;">10</span>
+      </div>
+      <div class="tooltip">P&G, Revlon, Kering. 10+ years S&OP end-to-end, supply planning, statistical forecasting and logistics background.</div>
+    </div>
+
+    <div class="stat-row" style="animation-delay:0.18s">
+      <div class="stat-row-inner">
+        <span class="stat-icon">💠</span>
+        <span class="stat-name">Resolve</span>
+        <div class="bar-track"><div class="bar-fill tier-s" style="width:80%;--delay:0.38s"></div></div>
+        <span class="stat-val" style="color:#4af0c4">8</span>
+      </div>
+      <div class="tooltip">9 years as a firefighter. High-pressure decisions, real stakes, no simulations.</div>
+    </div>
+
+    <div class="stat-row" style="animation-delay:0.26s">
+      <div class="stat-row-inner">
+        <span class="stat-icon">🔎</span>
+        <span class="stat-name">Foresight</span>
+        <div class="bar-track"><div class="bar-fill tier-s" style="width:80%;--delay:0.46s"></div></div>
+        <span class="stat-val" style="color:#4af0c4">8</span>
+      </div>
+      <div class="tooltip">Complex DAX/Power BI modeling, statistical forecasting, advanced excel.</div>
+    </div>
+
+    <div class="stat-row" style="animation-delay:0.34s">
+      <div class="stat-row-inner">
+        <span class="stat-icon">🎮</span>
+        <span class="stat-name">Gaming Lore</span>
+        <div class="bar-track"><div class="bar-fill tier-s" style="width:80%;--delay:0.54s"></div></div>
+        <span class="stat-val" style="color:#4af0c4">8</span>
+      </div>
+      <div class="tooltip">From retro gaming to current gen. Deep knowledge of titles, hardware, history and mechanics across generations and platforms.</div>
+    </div>
+
+    <div class="stat-row" style="animation-delay:0.42s">
+      <div class="stat-row-inner">
+        <span class="stat-icon">🖥️</span>
+        <span class="stat-name">Tech Lore</span>
+        <div class="bar-track"><div class="bar-fill tier-a" style="width:70%;--delay:0.62s"></div></div>
+        <span class="stat-val" style="color:#4a90f0">7</span>
+      </div>
+      <div class="tooltip">Kali Linux and Windows power user. Navigates systems, understands infrastructure, IT savvy.</div>
+    </div>
+
+    <div class="stat-row" style="animation-delay:0.50s">
+      <div class="stat-row-inner">
+        <span class="stat-icon">🌍</span>
+        <span class="stat-name">Tongues</span>
+        <div class="bar-track"><div class="bar-fill tier-a" style="width:70%;--delay:0.70s"></div></div>
+        <span class="stat-val" style="color:#4a90f0">7</span>
+      </div>
+      <div class="tooltip">Italian (native), Sardinian (heritage), English (fluent), Spanish (intermediate), French and Polish (functional). Switches languages mid-conversation without blinking.</div>
+    </div>
+
+    <div class="stat-row" style="animation-delay:0.58s">
+      <div class="stat-row-inner">
+        <span class="stat-icon">🥊</span>
+        <span class="stat-name">Combat Arts</span>
+        <div class="bar-track"><div class="bar-fill tier-c" style="width:60%;--delay:0.78s"></div></div>
+        <span class="stat-val" style="color:#f0c44a">6</span>
+      </div>
+      <div class="tooltip">Taekwondo green belt, 2 years kickboxing at good level, Brazilian JJ upper white belt, boxing beginner. Multi-discipline striker.</div>
+    </div>
+
+    <div class="stat-row" style="animation-delay:0.66s">
+      <div class="stat-row-inner">
+        <span class="stat-icon">💪</span>
+        <span class="stat-name">Anatomy</span>
+        <div class="bar-track"><div class="bar-fill tier-c" style="width:60%;--delay:0.86s"></div></div>
+        <span class="stat-val" style="color:#f0c44a">6</span>
+      </div>
+      <div class="tooltip">Certified Level 1 bodybuilding instructor. Knows training methodology, anatomy and programming. Theory is solid.</div>
+    </div>
+
+    <div class="stat-row" style="animation-delay:0.74s">
+      <div class="stat-row-inner">
+        <span class="stat-icon">🎾</span>
+        <span class="stat-name">Tennis</span>
+        <div class="bar-track"><div class="bar-fill tier-d" style="width:40%;--delay:0.94s"></div></div>
+        <span class="stat-val" style="color:#f04a7a">4</span>
+      </div>
+      <div class="tooltip">Recreational player with lessons ongoing. Solid enough to enjoy the game, plenty of room to grow.</div>
+    </div>
+
+    <div class="stat-row" style="animation-delay:0.82s">
+      <div class="stat-row-inner">
+        <span class="stat-icon">💀</span>
+        <span class="stat-name">Netrunner</span>
+        <div class="bar-track"><div class="bar-fill tier-d" style="width:20%;--delay:1.02s"></div></div>
+        <span class="stat-val" style="color:#f04a7a">2</span>
+      </div>
+      <div class="tooltip">CTF on picoCTF and OverTheWire ongoing. Nmap for network recon, Bettercap for MITM experiments. Learning by doing.</div>
+    </div>
+
+    <div class="stat-row" style="animation-delay:0.90s">
+      <div class="stat-row-inner">
+        <span class="stat-icon">🎸</span>
+        <span class="stat-name">Guitar</span>
+        <div class="bar-track"><div class="bar-fill tier-d" style="width:30%;--delay:1.10s"></div></div>
+        <span class="stat-val" style="color:#f04a7a">3</span>
+      </div>
+      <div class="tooltip">Ibanez TCY10E-BK guitar. Slowly losing skill points for lack of practice.</div>
+    </div>
+
+    <div class="stat-row" style="animation-delay:0.98s">
+      <div class="stat-row-inner">
+        <span class="stat-icon">⚖️</span>
+        <span class="stat-name">Legal Lore</span>
+        <div class="bar-track"><div class="bar-fill tier-c" style="width:60%;--delay:1.18s"></div></div>
+        <span class="stat-val" style="color:#f0c44a">6</span>
+      </div>
+      <div class="tooltip">Master's in Law, University of Sassari. Understands the system well enough to navigate its edges.</div>
+    </div>
+
+  </div>
+
+  <div class="hint">[ TAP A SKILL TO INSPECT ]</div>
+
+  <div class="footer">
+    <div class="hp-bar">
+      <div class="hp-pip"></div><div class="hp-pip"></div><div class="hp-pip"></div>
+      <div class="hp-pip"></div><div class="hp-pip"></div>
+      <div class="hp-pip empty"></div><div class="hp-pip empty"></div>
+    </div>
+    <span>CSCP CERT QUEST: ACTIVE 📜</span>
+    <span class="blink">▮</span>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.stat-row').forEach(function(row) {
+    row.addEventListener('click', function() {
+      var isOpen = row.classList.contains('open');
+      document.querySelectorAll('.stat-row.open').forEach(function(r) {
+        r.classList.remove('open');
+      });
+      if (!isOpen) row.classList.add('open');
+    });
+  });
+</script>
+
+</body>
+</html>
