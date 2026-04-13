@@ -221,7 +221,7 @@
   <div class="tabs">
     <div class="tab active-a" id="tab-a" onclick="switchSession('a')">SESSION A</div>
     <div class="tab"          id="tab-b" onclick="switchSession('b')">SESSION B</div>
-    <div class="tab"          id="tab-r" onclick="switchSession('r')">REHAB</div>
+    <div class="tab"          id="tab-r" onclick="switchSession('r')">EXTRA</div>
   </div>
 
   <div class="section-head">
@@ -287,12 +287,17 @@ const SESSIONS = {
     ]
   },
   r: {
-    label: 'REHAB', color: 'r',
+    label: 'EXTRA', color: 'r',
     exercises: [
-      { id: 'r_calfraise', name: 'CALF RAISE',                       wStep: 2.5, sStep: 1, rStep: 1,  defW: 0, defS: 3, defR: 15, defMode: 0 },
-      { id: 'r_calfpress', name: 'CALF PRESS',                       wStep: 5,   sStep: 1, rStep: 1,  defW: 0, defS: 3, defR: 15, defMode: 0 },
-      { id: 'r_gastroc',   name: 'GASTROC / GINOCCHIO TESO',        wStep: 2.5, sStep: 1, rStep: 5,  defW: 0, defS: 3, defR: 30, defMode: 2 },
-      { id: 'r_soleo',     name: 'SOLEO / GINOCCHIO FLESSO',        wStep: 2.5, sStep: 1, rStep: 5,  defW: 0, defS: 3, defR: 30, defMode: 2 },
+      { id: 'r_calfraise', name: 'CALF RAISE',                wStep: 2.5, sStep: 1, rStep: 1, defW: 0, defS: 3, defR: 15, defMode: 0 },
+      { id: 'r_calfpress', name: 'CALF PRESS',                wStep: 5,   sStep: 1, rStep: 1, defW: 0, defS: 3, defR: 15, defMode: 0 },
+      { id: 'r_gastroc',   name: 'GASTROC / GINOCCHIO TESO', wStep: 2.5, sStep: 1, rStep: 5, defW: 0, defS: 3, defR: 30, defMode: 2 },
+      { id: 'r_soleo',     name: 'SOLEO / GINOCCHIO FLESSO', wStep: 2.5, sStep: 1, rStep: 5, defW: 0, defS: 3, defR: 30, defMode: 2 },
+      { id: 'r_extra1',    name: '+ ADD EXERCISE',           wStep: 2.5, sStep: 1, rStep: 1, defW: 0, defS: 3, defR: 10, defMode: 0 },
+      { id: 'r_extra2',    name: '+ ADD EXERCISE',           wStep: 2.5, sStep: 1, rStep: 1, defW: 0, defS: 3, defR: 10, defMode: 0 },
+      { id: 'r_extra3',    name: '+ ADD EXERCISE',           wStep: 2.5, sStep: 1, rStep: 1, defW: 0, defS: 3, defR: 10, defMode: 0 },
+      { id: 'r_extra4',    name: '+ ADD EXERCISE',           wStep: 2.5, sStep: 1, rStep: 1, defW: 0, defS: 3, defR: 10, defMode: 0 },
+      { id: 'r_extra5',    name: '+ ADD EXERCISE',           wStep: 2.5, sStep: 1, rStep: 1, defW: 0, defS: 3, defR: 10, defMode: 0 },
     ]
   }
 };
