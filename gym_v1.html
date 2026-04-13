@@ -52,66 +52,31 @@
     padding-bottom: 20px;
     border-bottom: 1px solid var(--border);
   }
-
-  .header-tag {
-    font-size: 6px;
-    color: var(--text-dim);
-    letter-spacing: 3px;
-    margin-bottom: 14px;
-  }
-
-  .header h1 {
-    font-size: clamp(10px, 3vw, 14px);
-    color: var(--text);
-    letter-spacing: 2px;
-    line-height: 1.8;
-  }
-
+  .header-tag { font-size: 6px; color: var(--text-dim); letter-spacing: 3px; margin-bottom: 14px; }
+  .header h1  { font-size: clamp(10px, 3vw, 14px); color: var(--text); letter-spacing: 2px; line-height: 1.8; }
   .header h1 span { color: var(--c-a); }
 
   .save-flash {
-    font-size: 6px;
-    color: var(--c-a);
-    letter-spacing: 2px;
-    text-align: center;
-    height: 14px;
-    margin-top: 12px;
-    opacity: 0;
-    transition: opacity 0.4s;
+    font-size: 6px; color: var(--c-a); letter-spacing: 2px;
+    text-align: center; height: 14px; margin-top: 12px;
+    opacity: 0; transition: opacity 0.4s;
   }
   .save-flash.show { opacity: 1; }
 
   /* ── TABS ── */
-  .tabs {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 6px;
-    margin-bottom: 24px;
-  }
+  .tabs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 24px; }
 
   .tab {
-    padding: 12px 0;
-    text-align: center;
-    font-size: 8px;
-    letter-spacing: 2px;
-    border: 1px solid var(--border);
-    cursor: pointer;
-    color: var(--text-dim);
-    transition: all 0.15s;
-    -webkit-tap-highlight-color: transparent;
+    padding: 12px 0; text-align: center; font-size: 8px; letter-spacing: 2px;
+    border: 1px solid var(--border); cursor: pointer; color: var(--text-dim);
+    transition: all 0.15s; -webkit-tap-highlight-color: transparent;
   }
-
   .tab.active-a { border-color: var(--c-a); color: var(--c-a); background: rgba(126,206,196,0.06); }
   .tab.active-b { border-color: var(--c-b); color: var(--c-b); background: rgba(224,185,106,0.06); }
   .tab.active-r { border-color: var(--c-r); color: var(--c-r); background: rgba(224,123,159,0.06); }
 
   /* ── SECTION HEADING ── */
-  .section-head {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 24px 0 14px;
-  }
+  .section-head { display: flex; align-items: center; gap: 12px; margin: 24px 0 14px; }
   .sh-txt { font-size: 8px; color: var(--text-dim); letter-spacing: 2px; white-space: nowrap; }
   .sh-line { flex: 1; height: 1px; background: var(--border); }
 
@@ -127,68 +92,87 @@
   }
   .ex-row:first-child { border-top: 1px solid var(--border); }
 
-  .ex-name {
-    font-size: 8px;
-    color: var(--text);
-    letter-spacing: 1px;
-  }
-
-  .ex-controls {
-    display: grid;
+  /* top line: name + mode button */
+  .ex-top {
+    display: flex;
+    align-items: center;
     gap: 8px;
   }
+
+  .ex-name-input {
+    background: none;
+    border: none;
+    border-bottom: 1px solid transparent;
+    color: var(--text);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    flex: 1;
+    min-width: 0;
+    outline: none;
+    padding: 2px 0 4px;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
+  .ex-name-input::placeholder { color: var(--text-dim); }
+  .ex-name-input:focus         { border-bottom-color: var(--border-hi); }
+  .session-a .ex-name-input:focus { border-bottom-color: var(--c-a); }
+  .session-b .ex-name-input:focus { border-bottom-color: var(--c-b); }
+  .session-r .ex-name-input:focus { border-bottom-color: var(--c-r); }
+
+  /* mode cycle button */
+  .mode-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 5px;
+    letter-spacing: 1px;
+    padding: 4px 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    line-height: 1.6;
+  }
+  .session-a .mode-btn:hover, .session-a .mode-btn.active { border-color: var(--c-a); color: var(--c-a); }
+  .session-b .mode-btn:hover, .session-b .mode-btn.active { border-color: var(--c-b); color: var(--c-b); }
+  .session-r .mode-btn:hover, .session-r .mode-btn.active { border-color: var(--c-r); color: var(--c-r); }
+
+  /* controls grid */
+  .ex-controls { display: grid; gap: 8px; }
   .ex-controls.three-col { grid-template-columns: 1fr 1fr 1fr; }
   .ex-controls.two-col   { grid-template-columns: 1fr 1fr; }
 
-  .ex-ctrl {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+  .ex-ctrl { display: flex; flex-direction: column; gap: 6px; }
 
-  .ex-ctrl-label {
-    font-size: 6px;
-    color: var(--text-dim);
-    letter-spacing: 2px;
-    text-align: center;
-  }
+  .ex-ctrl-label { font-size: 6px; color: var(--text-dim); letter-spacing: 2px; text-align: center; }
 
   .ex-ctrl-row {
-    display: flex;
-    align-items: center;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    display: flex; align-items: center;
+    background: var(--surface); border: 1px solid var(--border);
   }
 
   .ctrl-btn {
-    background: none;
-    border: none;
+    background: none; border: none;
     font-family: 'Press Start 2P', monospace;
-    font-size: 12px;
-    color: var(--text-dim);
-    cursor: pointer;
-    width: 28px; height: 28px;
+    font-size: 12px; color: var(--text-dim);
+    cursor: pointer; width: 28px; height: 28px;
     display: flex; align-items: center; justify-content: center;
-    transition: color 0.12s;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    flex-shrink: 0;
+    transition: color 0.12s; user-select: none;
+    -webkit-tap-highlight-color: transparent; flex-shrink: 0;
   }
   .ctrl-btn:active  { transform: scale(0.82); }
   .ctrl-btn.p:hover { color: var(--text); }
   .ctrl-btn.m:hover { color: var(--red); }
 
   .ctrl-val {
-    flex: 1;
-    font-size: 9px;
-    text-align: center;
-    line-height: 1;
-    border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-    padding: 6px 2px;
-    white-space: nowrap;
+    flex: 1; font-size: 9px; text-align: center; line-height: 1;
+    border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+    padding: 6px 2px; white-space: nowrap;
   }
-
   .session-a .ctrl-val { color: var(--c-a); }
   .session-b .ctrl-val { color: var(--c-b); }
   .session-r .ctrl-val { color: var(--c-r); }
@@ -200,67 +184,27 @@
     100%{ transform: scale(1);   }
   }
 
-  /* ── EDITABLE NAME ── */
-  .ex-name-input {
-    background: none;
-    border: none;
-    border-bottom: 1px solid transparent;
-    color: var(--text);
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    letter-spacing: 1px;
-    width: 100%;
-    outline: none;
-    padding: 2px 0 4px;
-    display: block;
-    transition: border-color 0.2s;
-    -webkit-appearance: none;
-    border-radius: 0;
-  }
-  .ex-name-input::placeholder { color: var(--text-dim); }
-  .ex-name-input:focus { border-bottom-color: var(--border-hi); }
-  .session-a .ex-name-input:focus { border-bottom-color: var(--c-a); }
-  .session-b .ex-name-input:focus { border-bottom-color: var(--c-b); }
-  .session-r .ex-name-input:focus { border-bottom-color: var(--c-r); }
+  /* ── NOTES ── */
   .notes-input {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-mid);
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    padding: 10px;
-    resize: none;
-    outline: none;
-    line-height: 1.8;
-    letter-spacing: 1px;
-    transition: border-color 0.2s;
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    color: var(--text-mid); font-family: 'Press Start 2P', monospace;
+    font-size: 7px; padding: 10px; resize: none; outline: none;
+    line-height: 1.8; letter-spacing: 1px; transition: border-color 0.2s;
   }
   .notes-input:focus { border-color: var(--border-hi); }
   .notes-input::placeholder { color: var(--text-dim); }
 
   /* ── FOOTER ── */
   .footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 32px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border);
   }
-
   .footer-txt { font-size: 6px; color: var(--text-dim); letter-spacing: 2px; }
 
   .reset-btn {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    font-family: 'Press Start 2P', monospace;
-    font-size: 6px;
-    letter-spacing: 1px;
-    padding: 7px 10px;
-    cursor: pointer;
-    transition: all 0.2s;
+    background: none; border: 1px solid var(--border); color: var(--text-dim);
+    font-family: 'Press Start 2P', monospace; font-size: 6px;
+    letter-spacing: 1px; padding: 7px 10px; cursor: pointer; transition: all 0.2s;
   }
   .reset-btn:hover { border-color: var(--red); color: var(--red); }
 </style>
@@ -302,49 +246,53 @@
 
 </div>
 <script>
+// ── MODES ─────────────────────────────────────────────────────────
+// 0 = W + SETS + REPS
+// 1 = SETS + REPS
+// 2 = SETS + SECS
+const MODES = [
+  { label: 'W+S+R', hasW: true,  rLabel: 'REPS' },
+  { label: 'S+R',   hasW: false, rLabel: 'REPS' },
+  { label: 'S+SEC', hasW: false, rLabel: 'SECS' },
+];
+
 // ── CONFIG ────────────────────────────────────────────────────────
 const SESSIONS = {
   a: {
-    label: 'SESSION A',
-    color: 'a',
-    hasWeight: true,
+    label: 'SESSION A', color: 'a',
     exercises: [
-      { id: 'a_bench',    name: 'BARBELL BENCH PRESS',      wStep: 2.5, sStep: 1, rStep: 1, defW: 60,  defS: 4, defR: 8  },
-      { id: 'a_incline',  name: 'INCLINE DB BENCH PRESS',   wStep: 2,   sStep: 1, rStep: 1, defW: 20,  defS: 3, defR: 10 },
-      { id: 'a_fly',      name: 'DUMBBELL FLY',             wStep: 2,   sStep: 1, rStep: 1, defW: 12,  defS: 3, defR: 12 },
-      { id: 'a_chinup',   name: 'CHIN UPS',                 wStep: 2.5, sStep: 1, rStep: 1, defW: 0,   defS: 4, defR: 8  },
-      { id: 'a_cable',    name: 'CABLE PULL',               wStep: 2.5, sStep: 1, rStep: 1, defW: 40,  defS: 4, defR: 10 },
-      { id: 'a_curl',     name: 'EZ-BAR CURL',              wStep: 2.5, sStep: 1, rStep: 1, defW: 25,  defS: 3, defR: 12 },
-      { id: 'a_french',   name: 'FRENCH PRESS',             wStep: 2.5, sStep: 1, rStep: 1, defW: 20,  defS: 3, defR: 12 },
-      { id: 'a_tricep',   name: 'CABLE TRICEPS PUSHDOWN',   wStep: 2.5, sStep: 1, rStep: 1, defW: 25,  defS: 3, defR: 12 },
-      { id: 'a_core',     name: 'CORE',                     wStep: 0,   sStep: 1, rStep: 1, defW: 0,   defS: 3, defR: 20 },
+      { id: 'a_bench',   name: 'BARBELL BENCH PRESS',    wStep: 2.5, sStep: 1, rStep: 1,  defW: 60, defS: 4, defR: 8,  defMode: 0 },
+      { id: 'a_incline', name: 'INCLINE DB BENCH PRESS', wStep: 2,   sStep: 1, rStep: 1,  defW: 20, defS: 3, defR: 10, defMode: 0 },
+      { id: 'a_fly',     name: 'DUMBBELL FLY',           wStep: 2,   sStep: 1, rStep: 1,  defW: 12, defS: 3, defR: 12, defMode: 0 },
+      { id: 'a_chinup',  name: 'CHIN UPS',               wStep: 2.5, sStep: 1, rStep: 1,  defW: 0,  defS: 4, defR: 8,  defMode: 1 },
+      { id: 'a_cable',   name: 'CABLE PULL',             wStep: 2.5, sStep: 1, rStep: 1,  defW: 40, defS: 4, defR: 10, defMode: 0 },
+      { id: 'a_curl',    name: 'EZ-BAR CURL',            wStep: 2.5, sStep: 1, rStep: 1,  defW: 25, defS: 3, defR: 12, defMode: 0 },
+      { id: 'a_french',  name: 'FRENCH PRESS',           wStep: 2.5, sStep: 1, rStep: 1,  defW: 20, defS: 3, defR: 12, defMode: 0 },
+      { id: 'a_tricep',  name: 'CABLE TRICEPS PUSHDOWN', wStep: 2.5, sStep: 1, rStep: 1,  defW: 25, defS: 3, defR: 12, defMode: 0 },
+      { id: 'a_core',    name: 'CORE',                   wStep: 2.5, sStep: 1, rStep: 5,  defW: 0,  defS: 3, defR: 30, defMode: 2 },
     ]
   },
   b: {
-    label: 'SESSION B',
-    color: 'b',
-    hasWeight: true,
+    label: 'SESSION B', color: 'b',
     exercises: [
-      { id: 'b_squat',    name: 'SMITH MACHINE SQUAT',      wStep: 5,   sStep: 1, rStep: 1, defW: 60,  defS: 4, defR: 10 },
-      { id: 'b_legpress', name: 'LEG PRESS',                wStep: 5,   sStep: 1, rStep: 1, defW: 80,  defS: 4, defR: 10 },
-      { id: 'b_legext',   name: 'LEG EXTENSION',            wStep: 2.5, sStep: 1, rStep: 1, defW: 40,  defS: 3, defR: 12 },
-      { id: 'b_legcurl',  name: 'LEG CURL',                 wStep: 2.5, sStep: 1, rStep: 1, defW: 35,  defS: 3, defR: 12 },
-      { id: 'b_shoulder', name: 'DB SHOULDER PRESS',        wStep: 2,   sStep: 1, rStep: 1, defW: 16,  defS: 4, defR: 10 },
-      { id: 'b_lateral',  name: 'LYING LATERAL RAISE',      wStep: 1,   sStep: 1, rStep: 1, defW: 8,   defS: 3, defR: 15 },
-      { id: 'b_extra1',   name: '+ ADD EXERCISE',           wStep: 2.5, sStep: 1, rStep: 1, defW: 0,   defS: 3, defR: 10 },
-      { id: 'b_extra2',   name: '+ ADD EXERCISE',           wStep: 2.5, sStep: 1, rStep: 1, defW: 0,   defS: 3, defR: 10 },
-      { id: 'b_core',     name: 'CORE',                     wStep: 0,   sStep: 1, rStep: 1, defW: 0,   defS: 3, defR: 20 },
+      { id: 'b_squat',    name: 'SMITH MACHINE SQUAT',  wStep: 5,   sStep: 1, rStep: 1,  defW: 60, defS: 4, defR: 10, defMode: 0 },
+      { id: 'b_legpress', name: 'LEG PRESS',            wStep: 5,   sStep: 1, rStep: 1,  defW: 80, defS: 4, defR: 10, defMode: 0 },
+      { id: 'b_legext',   name: 'LEG EXTENSION',        wStep: 2.5, sStep: 1, rStep: 1,  defW: 40, defS: 3, defR: 12, defMode: 0 },
+      { id: 'b_legcurl',  name: 'LEG CURL',             wStep: 2.5, sStep: 1, rStep: 1,  defW: 35, defS: 3, defR: 12, defMode: 0 },
+      { id: 'b_shoulder', name: 'DB SHOULDER PRESS',    wStep: 2,   sStep: 1, rStep: 1,  defW: 16, defS: 4, defR: 10, defMode: 0 },
+      { id: 'b_lateral',  name: 'LYING LATERAL RAISE',  wStep: 1,   sStep: 1, rStep: 1,  defW: 8,  defS: 3, defR: 15, defMode: 0 },
+      { id: 'b_extra1',   name: '+ ADD EXERCISE',       wStep: 2.5, sStep: 1, rStep: 1,  defW: 0,  defS: 3, defR: 10, defMode: 0 },
+      { id: 'b_extra2',   name: '+ ADD EXERCISE',       wStep: 2.5, sStep: 1, rStep: 1,  defW: 0,  defS: 3, defR: 10, defMode: 0 },
+      { id: 'b_core',     name: 'CORE',                 wStep: 2.5, sStep: 1, rStep: 5,  defW: 0,  defS: 3, defR: 30, defMode: 2 },
     ]
   },
   r: {
-    label: 'REHAB',
-    color: 'r',
-    hasWeight: true,
+    label: 'REHAB', color: 'r',
     exercises: [
-      { id: 'r_calfraise', name: 'CALF RAISE',                          wStep: 2.5, sStep: 1, rStep: 1, defW: 0, defS: 3, defR: 15 },
-      { id: 'r_calfpress', name: 'CALF PRESS',                          wStep: 5,   sStep: 1, rStep: 1, defW: 0, defS: 3, defR: 15 },
-      { id: 'r_gastroc',   name: 'GASTROC STRETCH\nGINOCCHIO TESO',    wStep: 0,   sStep: 1, rStep: 5, defW: 0, defS: 3, defR: 30, rLabel: 'SECS' },
-      { id: 'r_soleo',     name: 'SOLEO STRETCH\nGINOCCHIO FLESSO',    wStep: 0,   sStep: 1, rStep: 5, defW: 0, defS: 3, defR: 30, rLabel: 'SECS' },
+      { id: 'r_calfraise', name: 'CALF RAISE',                       wStep: 2.5, sStep: 1, rStep: 1,  defW: 0, defS: 3, defR: 15, defMode: 0 },
+      { id: 'r_calfpress', name: 'CALF PRESS',                       wStep: 5,   sStep: 1, rStep: 1,  defW: 0, defS: 3, defR: 15, defMode: 0 },
+      { id: 'r_gastroc',   name: 'GASTROC / GINOCCHIO TESO',        wStep: 2.5, sStep: 1, rStep: 5,  defW: 0, defS: 3, defR: 30, defMode: 2 },
+      { id: 'r_soleo',     name: 'SOLEO / GINOCCHIO FLESSO',        wStep: 2.5, sStep: 1, rStep: 5,  defW: 0, defS: 3, defR: 30, defMode: 2 },
     ]
   }
 };
@@ -355,12 +303,16 @@ let activeSession = 'a';
 const sKey  = s => `gym_${s}`;
 const nKey  = s => `gym_notes_${s}`;
 const cKey  = s => `gym_names_${s}`;
+const mKey  = s => `gym_modes_${s}`;
+
 const loadS = s => { try { return JSON.parse(localStorage.getItem(sKey(s))) || {}; } catch { return {}; } };
 const saveS = (s, d) => { localStorage.setItem(sKey(s), JSON.stringify(d)); flash(); };
 const loadN = s => localStorage.getItem(nKey(s)) || '';
 const saveN = (s, v) => localStorage.setItem(nKey(s), v);
 const loadC = s => { try { return JSON.parse(localStorage.getItem(cKey(s))) || {}; } catch { return {}; } };
 const saveC = (s, d) => { localStorage.setItem(cKey(s), JSON.stringify(d)); };
+const loadM = s => { try { return JSON.parse(localStorage.getItem(mKey(s))) || {}; } catch { return {}; } };
+const saveM = (s, d) => { localStorage.setItem(mKey(s), JSON.stringify(d)); };
 
 // ── ACTIONS ───────────────────────────────────────────────────────
 function change(exId, field, delta) {
@@ -378,14 +330,22 @@ function change(exId, field, delta) {
   }
 }
 
+function cycleMode(exId) {
+  const modes   = loadM(activeSession);
+  const cfg     = SESSIONS[activeSession].exercises.find(e => e.id === exId);
+  const current = modes[exId] !== undefined ? modes[exId] : cfg.defMode;
+  modes[exId]   = (current + 1) % 3;
+  saveM(activeSession, modes);
+  renderAll();
+}
+
 function saveName(exId, value) {
-  const names    = loadC(activeSession);
-  const defName  = SESSIONS[activeSession].exercises.find(e => e.id === exId).name.replace('\n', ' ');
-  const cleaned  = value.toUpperCase().trim();
+  const names   = loadC(activeSession);
+  const cleaned = value.toUpperCase().trim();
   if (cleaned && cleaned !== '+ ADD EXERCISE') {
     names[exId] = cleaned;
   } else if (!cleaned) {
-    delete names[exId]; // revert to default
+    delete names[exId];
   }
   saveC(activeSession, names);
   flash();
@@ -410,6 +370,7 @@ function confirmReset() {
   localStorage.removeItem(sKey(activeSession));
   localStorage.removeItem(nKey(activeSession));
   localStorage.removeItem(cKey(activeSession));
+  localStorage.removeItem(mKey(activeSession));
   renderAll();
 }
 
@@ -429,35 +390,39 @@ function renderAll() {
   const cfg   = SESSIONS[sess];
   const data  = loadS(sess);
   const names = loadC(sess);
+  const modes = loadM(sess);
 
   document.getElementById('exercise-list').innerHTML = cfg.exercises.map(ex => {
-    const saved = data[ex.id] || {};
-    const w = saved.w !== undefined ? saved.w : ex.defW;
-    const s = saved.s !== undefined ? saved.s : ex.defS;
-    const r = saved.r !== undefined ? saved.r : ex.defR;
+    const saved       = data[ex.id] || {};
+    const w           = saved.w !== undefined ? saved.w : ex.defW;
+    const s           = saved.s !== undefined ? saved.s : ex.defS;
+    const r           = saved.r !== undefined ? saved.r : ex.defR;
     const displayName = names[ex.id] || ex.name;
+    const modeIdx     = modes[ex.id] !== undefined ? modes[ex.id] : ex.defMode;
+    const mode        = MODES[modeIdx];
+    const colClass    = mode.hasW ? 'three-col' : 'two-col';
+    const rStep       = mode.rLabel === 'SECS' ? 5 : ex.rStep;
 
-    const skipWeight = ex.wStep === 0;
-    const colClass   = skipWeight ? 'two-col' : 'three-col';
-    const rLabel     = ex.rLabel || 'REPS';
-
-    const weightCol = skipWeight ? '' : `
-        <div class="ex-ctrl">
-          <span class="ex-ctrl-label">WEIGHT</span>
-          <div class="ex-ctrl-row">
-            <button class="ctrl-btn m" onclick="change('${ex.id}','w',${-ex.wStep})">-</button>
-            <span class="ctrl-val" id="val-${ex.id}-w">${fmtW(w)}</span>
-            <button class="ctrl-btn p" onclick="change('${ex.id}','w',${ex.wStep})">+</button>
-          </div>
-        </div>`;
+    const weightCol = !mode.hasW ? '' : `
+      <div class="ex-ctrl">
+        <span class="ex-ctrl-label">WEIGHT</span>
+        <div class="ex-ctrl-row">
+          <button class="ctrl-btn m" onclick="change('${ex.id}','w',${-ex.wStep})">-</button>
+          <span class="ctrl-val" id="val-${ex.id}-w">${fmtW(w)}</span>
+          <button class="ctrl-btn p" onclick="change('${ex.id}','w',${ex.wStep})">+</button>
+        </div>
+      </div>`;
 
     return `
     <div class="ex-row session-${cfg.color}">
-      <input class="ex-name-input"
-             value="${displayName.replace('\n',' ')}"
-             onblur="saveName('${ex.id}', this.value)"
-             onkeydown="if(event.key==='Enter') this.blur()"
-             placeholder="+ ADD EXERCISE">
+      <div class="ex-top">
+        <input class="ex-name-input"
+               value="${displayName}"
+               onblur="saveName('${ex.id}', this.value)"
+               onkeydown="if(event.key==='Enter') this.blur()"
+               placeholder="+ ADD EXERCISE">
+        <button class="mode-btn active" onclick="cycleMode('${ex.id}')">${mode.label}</button>
+      </div>
       <div class="ex-controls ${colClass}">
         ${weightCol}
         <div class="ex-ctrl">
@@ -469,11 +434,11 @@ function renderAll() {
           </div>
         </div>
         <div class="ex-ctrl">
-          <span class="ex-ctrl-label">${rLabel}</span>
+          <span class="ex-ctrl-label">${mode.rLabel}</span>
           <div class="ex-ctrl-row">
-            <button class="ctrl-btn m" onclick="change('${ex.id}','r',${-ex.rStep})">-</button>
+            <button class="ctrl-btn m" onclick="change('${ex.id}','r',${-rStep})">-</button>
             <span class="ctrl-val" id="val-${ex.id}-r">${r}</span>
-            <button class="ctrl-btn p" onclick="change('${ex.id}','r',${ex.rStep})">+</button>
+            <button class="ctrl-btn p" onclick="change('${ex.id}','r',${rStep})">+</button>
           </div>
         </div>
       </div>
