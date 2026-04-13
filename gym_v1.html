@@ -347,10 +347,10 @@ function cycleMode(exId) {
 function saveName(exId, value) {
   const names   = loadC(activeSession);
   const cleaned = value.toUpperCase().trim();
-  if (cleaned && cleaned !== '+ ADD EXERCISE') {
+  if (cleaned) {
     names[exId] = cleaned;
-  } else if (!cleaned) {
-    delete names[exId];
+  } else {
+    delete names[exId]; // empty input reverts to config default
   }
   saveC(activeSession, names);
   flash();
