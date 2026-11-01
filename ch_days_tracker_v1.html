@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH Days Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1621;
+    --panel: #152030;
+    --panel2: #1b2a3c;
+    --border: #2a3b50;
+    --text: #c9d6e3;
+    --muted: #6f8399;
+    --steel: #5b8bb5;
+    --teal: #3fb8a5;
+    --amber: #e0a53a;
+    --red: #d9534f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    padding: 16px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 15px;
+    color: var(--steel);
+    text-align: center;
+    margin: 8px 0 18px;
+    letter-spacing: 1px;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .ptitle {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+
+  /* Month nav */
+  .nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .nav button {
+    background: var(--panel2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; width: 44px; height: 40px; font-size: 20px; cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .nav .mname { font-family: 'Press Start 2P', monospace; font-size: 11px; color: var(--text); }
+
+  /* Calendar */
+  .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .wd { text-align: center; font-size: 12px; color: var(--muted); padding-bottom: 4px; }
+  .day {
+    aspect-ratio: 1 / 1;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    line-height: 1.1;
+  }
+  .day .tag { font-size: 10px; margin-top: 2px; }
+  .day.empty { background: transparent; border: none; cursor: default; }
+  .day.wknd { color: var(--muted); }
+  .day.today { outline: 2px solid var(--steel); outline-offset: -2px; }
+  .day.P { background: rgba(63,184,165,0.18); border-color: var(--teal); color: var(--teal); }
+  .day.W { background: rgba(224,165,58,0.22); border-color: var(--amber); color: var(--amber); }
+
+  .legend { display: flex; gap: 14px; justify-content: center; margin-top: 12px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+  .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
+  .sw.P { background: var(--teal); }
+  .sw.W { background: var(--amber); }
+
+  .mstats { display: flex; justify-content: space-around; margin-top: 12px; font-size: 14px; }
+  .mstats b { font-size: 18px; color: var(--text); }
+
+  /* Year totals */
+  .row { margin-bottom: 14px; }
+  .rhead { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+  .rhead .val { min-width: 90px; text-align: right; }
+  .bar { height: 12px; background: var(--panel2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .fill { height: 100%; width: 0; border-radius: 6px; transition: width .3s; }
+  .status {
+    font-family: 'Press Start 2P', monospace; font-size: 10px;
+    text-align: center; padding: 10px; border-radius: 6px; margin-top: 4px; line-height: 1.6;
+  }
+  .ok { background: rgba(63,184,165,0.15); color: var(--teal); }
+  .watch { background: rgba(224,165,58,0.15); color: var(--amber); }
+  .over { background: rgba(217,83,79,0.18); color: var(--red); }
+
+  /* Backup */
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    flex: 1; min-width: 120px;
+    background: var(--panel2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 11px 8px; font-family: 'Share Tech Mono', monospace;
+    font-size: 14px; cursor: pointer; text-align: center;
+  }
+  .note { font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.4; }
+  input[type=file] { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>★ CH DAYS ★</h1>
+
+  <!-- Calendar -->
+  <div class="panel">
+    <div class="nav">
+      <button id="prev">&lsaquo;</button>
+      <span class="mname" id="mname"></span>
+      <button id="next">&rsaquo;</button>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="legend">
+      <span><span class="sw P"></span>IN CH (no work)</span>
+      <span><span class="sw W"></span>WORKED IN CH</span>
+    </div>
+    <div class="mstats">
+      <span>Month worked: <b id="mW">0</b></span>
+      <span>Month in CH: <b id="mP">0</b></span>
+    </div>
+    <div class="note">Tap a day: empty → in CH → worked in CH → empty.</div>
+  </div>
+
+  <!-- Year totals -->
+  <div class="panel">
+    <div class="ptitle" id="ytitle">YEAR TOTALS</div>
+
+    <div class="row">
+      <div class="rhead"><span>Days worked in CH</span><span class="val" id="vW"></span></div>
+      <div class="bar"><div class="fill" id="fW"></div></div>
+    </div>
+
+    <div class="row">
+      <div class="rhead"><span>Days in CH (total)</span><span class="val" id="vP"></span></div>
+      <div class="bar"><div class="fill" id="fP"></div></div>
+    </div>
+
+    <div class="row">
+      <div class="rhead"><span>Longest stay in a row</span><span class="val" id="vS"></span></div>
+      <div class="bar"><div class="fill" id="fS"></div></div>
+    </div>
+
+    <div class="status" id="status"></div>
+  </div>
+
+  <!-- Backup -->
+  <div class="panel">
+    <div class="ptitle">BACKUP</div>
+    <div class="btns">
+      <button class="btn" id="expCsv">Export CSV</button>
+      <button class="btn" id="expJson">Backup JSON</button>
+      <button class="btn" id="impJson">Restore JSON</button>
+      <input type="file" id="file" accept=".json,application/json">
+    </div>
+    <div class="note">Data lives only in this browser. Export a backup every month: this log is your proof of days, don't lose it.</div>
+  </div>
+</div>
+
+<script>
+  const KEY = 'chdays_v1';
+  const LIMIT_WORK = 90;    // max days worked in CH per calendar year
+  const TARGET_PRES = 183;  // max days in CH per year (treaty threshold); amber from ~146
+  const LIMIT_STREAK = 30;  // never 30 consecutive days in CH while working
+  const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; }
+  }
+  function save(d) {
+    try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) { alert('Could not save in this browser.'); }
+  }
+  const pad = n => String(n).padStart(2, '0');
+  const iso = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`;
+
+  let data = load();
+  const now = new Date();
+  let vy = now.getFullYear(), vm = now.getMonth();
+
+  function renderCalendar() {
+    document.getElementById('mname').textContent = `${MONTHS[vm]} ${vy}`;
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    ['M','T','W','T','F','S','S'].forEach(w => {
+      const el = document.createElement('div');
+      el.className = 'wd'; el.textContent = w; grid.appendChild(el);
+    });
+    const first = new Date(vy, vm, 1);
+    const offset = (first.getDay() + 6) % 7; // Monday first
+    const days = new Date(vy, vm + 1, 0).getDate();
+    for (let i = 0; i < offset; i++) {
+      const e = document.createElement('div'); e.className = 'day empty'; grid.appendChild(e);
+    }
+    const todayIso = iso(now.getFullYear(), now.getMonth(), now.getDate());
+    let mW = 0, mP = 0;
+    for (let d = 1; d <= days; d++) {
+      const key = iso(vy, vm, d);
+      const st = data[key];
+      const dow = (offset + d - 1) % 7;
+      const b = document.createElement('button');
+      b.className = 'day' + (dow >= 5 ? ' wknd' : '') + (key === todayIso ? ' today' : '') + (st ? ' ' + st : '');
+      b.innerHTML = `${d}<span class="tag">${st === 'W' ? 'WORK' : st === 'P' ? 'CH' : '&nbsp;'}</span>`;
+      b.onclick = () => {
+        const cur = data[key];
+        if (!cur) data[key] = 'P';
+        else if (cur === 'P') data[key] = 'W';
+        else delete data[key];
+        save(data); render();
+      };
+      grid.appendChild(b);
+      if (st === 'W') mW++;
+      if (st) mP++;
+    }
+    document.getElementById('mW').textContent = mW;
+    document.getElementById('mP').textContent = mP;
+  }
+
+  function yearStats(y) {
+    let w = 0, p = 0, streak = 0, best = 0;
+    const d = new Date(y, 0, 1);
+    while (d.getFullYear() === y) {
+      const st = data[iso(y, d.getMonth(), d.getDate())];
+      if (st === 'W') w++;
+      if (st) { p++; streak++; best = Math.max(best, streak); } else streak = 0;
+      d.setDate(d.getDate() + 1);
+    }
+    return { w, p, best };
+  }
+
+  function setBar(id, val, max) {
+    const pct = Math.min(100, (val / max) * 100);
+    const el = document.getElementById(id);
+    el.style.width = pct + '%';
+    el.style.background = pct >= 100 ? 'var(--red)' : pct >= 80 ? 'var(--amber)' : 'var(--teal)';
+  }
+
+  function renderTotals() {
+    const s = yearStats(vy);
+    document.getElementById('ytitle').textContent = `YEAR TOTALS ${vy}`;
+    document.getElementById('vW').textContent = `${s.w} / ${LIMIT_WORK}`;
+    document.getElementById('vP').textContent = `${s.p} / ${TARGET_PRES}`;
+    document.getElementById('vS').textContent = `${s.best} / ${LIMIT_STREAK}`;
+    setBar('fW', s.w, LIMIT_WORK);
+    setBar('fP', s.p, TARGET_PRES);
+    setBar('fS', s.best, LIMIT_STREAK);
+
+    const st = document.getElementById('status');
+    if (s.w >= LIMIT_WORK || s.best >= LIMIT_STREAK || s.p >= TARGET_PRES) {
+      st.className = 'status over'; st.textContent = '✖ OVER LIMIT – CHECK NOW';
+    } else if (s.w >= LIMIT_WORK * 0.8 || s.best >= LIMIT_STREAK * 0.8 || s.p >= TARGET_PRES * 0.8) {
+      st.className = 'status watch'; st.textContent = '▲ WATCH – CLOSE TO A LIMIT';
+    } else {
+      st.className = 'status ok'; st.textContent = '● ALL GOOD';
+    }
+  }
+
+  function render() { renderCalendar(); renderTotals(); }
+
+  document.getElementById('prev').onclick = () => { vm--; if (vm < 0) { vm = 11; vy--; } render(); };
+  document.getElementById('next').onclick = () => { vm++; if (vm > 11) { vm = 0; vy++; } render(); };
+
+  function download(name, text, type) {
+    const blob = new Blob([text], { type });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  const stamp = () => new Date().toISOString().slice(0, 10);
+
+  document.getElementById('expCsv').onclick = () => {
+    const rows = ['date,status'];
+    Object.keys(data).sort().forEach(k => rows.push(`${k},${data[k] === 'W' ? 'worked_in_CH' : 'in_CH_no_work'}`));
+    download(`ch_days_${stamp()}.csv`, rows.join('\n'), 'text/csv');
+  };
+  document.getElementById('expJson').onclick = () => {
+    download(`ch_days_backup_${stamp()}.json`, JSON.stringify(data, null, 1), 'application/json');
+  };
+  document.getElementById('impJson').onclick = () => document.getElementById('file').click();
+  document.getElementById('file').onchange = e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const obj = JSON.parse(r.result);
+        const clean = {};
+        Object.keys(obj).forEach(k => {
+          if (/^\d{4}-\d{2}-\d{2}$/.test(k) && (obj[k] === 'P' || obj[k] === 'W')) clean[k] = obj[k];
+        });
+        if (!confirm(`Restore ${Object.keys(clean).length} days? Current data will be replaced.`)) return;
+        data = clean; save(data); render();
+      } catch (err) { alert('Invalid backup file.'); }
+      e.target.value = '';
+    };
+    r.readAsText(f);
+  };
+
+  render();
+</script>
+</body>
+</html>
